@@ -274,6 +274,21 @@ function dailyDone(){
  const y=new Date(Date.now()-864e5).toISOString().slice(0,10);
  st.n=(st.last===y)?st.n+1:1;st.last=today;store.set('streak',st);hap('heavy');dailyStart();
 }
+dailyStart();
+}
+Object.assign(window, {
+  home, setup, saveNames, nav, hap,
+  syncStart, syncQ, syncPick, syncRes,
+  guessStart, guessA, guessAq, guessSet,
+  guessBq, guessReveal, guessNext, guessRes,
+  cardsStart, cardsShow, cardsNext,
+  dateStart, dateShow, dateSpin,
+  dailyStart, dailyDone, share, handoff
+});
+
+window.addEventListener('error', function(e) {
+  console.error('Ошибка игры:', e.message, e.filename, e.lineno);
+});
 
 home();
 </script>
