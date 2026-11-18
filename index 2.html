@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>ДВОЕ</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:#0e0912;--card:#1a1222;--card2:#241830;--tx:#f6eef8;--mut:#9d8fa8;--a:#ff5e7e;--b:#8a5cff;--ok:#4ade80;--no:#ff6b6b}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:-apple-system,"SF Pro Display",Roboto,Segoe UI,sans-serif;min-height:100vh}
+body{background:radial-gradient(900px 500px at 10% -10%,rgba(255,94,126,.22),transparent 60%),radial-gradient(800px 500px at 100% 110%,rgba(138,92,255,.22),transparent 60%),var(--bg);background-attachment:fixed}
+#app{max-width:480px;margin:0 auto;padding:22px 18px 40px;min-height:100vh;display:flex;flex-direction:column}
+h1{font-size:54px;letter-spacing:6px;margin:6px 0 0;font-weight:900;background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:26px;margin:0 0 8px;line-height:1.2}
+.sub{color:var(--mut);font-size:15px;line-height:1.45;margin:0 0 20px}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;min-height:32px}
+.back{background:none;border:0;color:var(--mut);font-size:15px;padding:6px 0;cursor:pointer}
+.pill{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mut)}
+.menu{display:grid;gap:12px;margin-top:6px}
+.tile{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:18px;text-align:left;color:var(--tx);cursor:pointer;position:relative;overflow:hidden;transition:transform .12s}
+.tile:active{transform:scale(.97)}
+.tile b{display:block;font-size:19px;margin-bottom:5px}
+.tile span{color:var(--mut);font-size:14px;line-height:1.4;display:block;padding-right:34px}
+.tile i{position:absolute;right:16px;top:50%;transform:translateY(-50%);width:10px;height:10px;border-right:2px solid var(--a);border-top:2px solid var(--a);transform:translateY(-50%) rotate(45deg)}
+.tile.hot{background:linear-gradient(135deg,rgba(255,94,126,.28),rgba(138,92,255,.28))}
+.btn{width:100%;padding:17px;border-radius:16px;border:0;font-size:17px;font-weight:700;color:#fff;background:linear-gradient(90deg,var(--a),var(--b));cursor:pointer;margin-top:12px;transition:transform .12s,opacity .2s}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:var(--card2);color:var(--tx)}
+.btn[disabled]{opacity:.4}
+input{width:100%;padding:15px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:var(--card);color:var(--tx);font-size:17px;margin-bottom:10px;outline:none}
+input:focus{border-color:var(--a)}
+.opt{width:100%;text-align:left;padding:17px;margin-bottom:10px;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:var(--card);color:var(--tx);font-size:16px;line-height:1.35;cursor:pointer;transition:all .15s}
+.opt:active{transform:scale(.98)}
+.opt.sel{border-color:var(--a);background:rgba(255,94,126,.15)}
+.opt.ok{border-color:var(--ok);background:rgba(74,222,128,.14)}
+.opt.bad{border-color:var(--no);background:rgba(255,107,107,.14)}
+.q{font-size:24px;font-weight:700;line-height:1.3;margin:6px 0 22px}
+.bar{height:5px;background:var(--card2);border-radius:5px;overflow:hidden;margin-bottom:18px}
+.bar div{height:100%;background:linear-gradient(90deg,var(--a),var(--b));transition:width .3s}
+.center{flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center}
+.who{font-size:40px;font-weight:900;margin:10px 0 14px;background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.big{font-size:88px;font-weight:900;line-height:1;background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.rt{font-size:22px;font-weight:700;margin:10px 0 6px}
+.row{background:var(--card);border-radius:14px;padding:13px 15px;margin-bottom:8px;font-size:14px;border-left:4px solid var(--no)}
+.row.m{border-left-color:var(--ok)}
+.row small{display:block;color:var(--mut);margin-top:5px;font-size:13px}
+.flip{background:linear-gradient(145deg,var(--card2),var(--card));border:1px solid rgba(255,255,255,.08);border-radius:26px;padding:34px 24px;min-height:260px;display:flex;flex-direction:column;justify-content:center;text-align:center;margin:8px 0 6px}
+.flip .lv{font-size:12px;letter-spacing:2px;color:var(--a);text-transform:uppercase;margin-bottom:16px}
+.flip .tx{font-size:23px;font-weight:700;line-height:1.35}
+.seg{display:flex;gap:8px;margin-bottom:14px}
+.seg button{flex:1;padding:11px 4px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:var(--card);color:var(--mut);font-size:14px;cursor:pointer}
+.seg button.on{background:rgba(255,94,126,.18);border-color:var(--a);color:var(--tx)}
+.streak{display:flex;gap:6px;margin:12px 0 18px}
+.streak span{flex:1;height:8px;border-radius:5px;background:var(--card2)}
+.streak span.on{background:linear-gradient(90deg,var(--a),var(--b))}
+.fade{animation:f .3s ease}
+@keyframes f{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const tg=window.Telegram&&Telegram.WebApp;
+if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#0e0912');tg.setBackgroundColor('#0e0912')}catch(e){}}
+const BOT_LINK='https://t.me/YOUR_BOT_USERNAME'; // замени на ссылку своего бота
+const hap=t=>{try{tg&&tg.HapticFeedback&&tg.HapticFeedback.impactOccurred(t||'light')}catch(e){}};
+const $=document.getElementById('app');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const store={get(k,d){try{const v=localStorage.getItem('dvoe_'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('dvoe_'+k,JSON.stringify(v))}catch(e){}}};
+
+/* ---------- ДАННЫЕ ---------- */
+const SYNC=[
+["Идеальный вечер пятницы",["Дома, плед и кино","Город, бар, музыка"]],
+["Отпуск мечты",["Море и ничего не делать","Горы и маршруты"]],
+["Спор решается",["Спокойным разговором","Взять паузу и остыть"]],
+["Утро выходного",["Проспать до обеда","Встать рано и успеть всё"]],
+["Подарок на годовщину",["Вещь, которая пригодится","Впечатление, которое запомнится"]],
+["Деньги появились внезапно",["Отложить и вложить","Потратить и порадоваться"]],
+["Если ссора, кто идёт первым",["Тот, кто виноват","Тот, кто быстрее остыл"]],
+["Совместное будущее",["Дом за городом","Квартира в центре"]],
+["Свидание вслепую в новом городе",["Спонтанно гуляем","План расписан заранее"]],
+["Что важнее в паре",["Доверие","Страсть"]],
+["Как любишь получать внимание",["Слова и признания","Действия и забота"]],
+["Лучший способ провести годовщину",["Тихий ужин вдвоём","Большая вечеринка с друзьями"]],
+["Питомец",["Собака","Кот"]],
+["Фото в соцсетях",["Выкладывать нас","Оставить это личным"]],
+["Переезд в другую страну ради работы",["Да, это приключение","Нет, здесь наш дом"]],
+["Ночь, когда не спится",["Говорить обо всём","Молча лежать рядом"]]
+];
+const GUESS=[
+["Моё любимое время суток",["Утро","День","Вечер","Ночь"]],
+["Мой главный страх",["Одиночество","Провал","Потерять близких","Неопределённость"]],
+["Что я выберу на ужин",["Паста","Суши","Мясо","Что-то лёгкое"]],
+["Моя суперсила в отношениях",["Поддержка","Юмор","Честность","Терпение"]],
+["Как я лучше восстанавливаюсь",["Сон","Прогулка","Общение","Тишина в одиночестве"]],
+["Что меня больше всего бесит",["Опоздания","Грубость","Беспорядок","Ложь"]],
+["Где бы я хотел(а) жить",["У моря","В мегаполисе","В горах","В тихом городке"]],
+["Мой любимый способ проводить выходные",["Путешествие","Дом и сериалы","Друзья","Хобби и проекты"]],
+["Что я чаще всего прошу в трудный день",["Обнять","Выслушать","Оставить одного(ой)","Отвлечь"]],
+["Какая из этих мечт мне ближе",["Свой бизнес","Мир объехать","Большая семья","Спокойная жизнь"]]
+];
+const CARDS={
+"Начало":["Какой момент из нашего знакомства ты вспоминаешь чаще всего?","Что я сделал(а) в первые недели, что тебя зацепило?","Какую мою привычку ты втайне любишь?","Что в нас двоих тебя до сих пор удивляет?","Какое наше совместное фото тебе дороже остальных и почему?","Какая песня для тебя про нас?","Чему ты научился(ась) у меня?","Что бы ты хотел(а) повторить из нашего первого свидания?","Какой мой комплимент запомнился тебе надолго?","Опиши меня тремя словами. Без шуток."],
+"Глубже":["О чём ты боишься мне сказать, потому что это может прозвучать глупо?","Когда ты в последний раз чувствовал(а) себя по-настоящему услышанным(ой) мной?","Что я мог(ла) бы делать иначе, чтобы тебе было легче рядом?","Какая моя черта тебя ранит, хотя ты молчишь?","Каким ты видишь нас через десять лет?","Что для тебя значит чувствовать себя в безопасности со мной?","О чём ты мечтаешь, но никому не рассказываешь?","Какой наш спор ты считаешь самым важным и почему?","Что ты хочешь, чтобы я знал(а) о твоём детстве?","Когда ты больше всего гордился(ась) мной?"],
+"Близко":["Какое прикосновение ты любишь больше всего?","Расскажи о нашем самом нежном моменте.","Где бы ты хотел(а), чтобы мы оказались сегодня ночью, если бы всё было возможно?","Что мне сказать или сделать, чтобы ты почувствовал(а) себя желанным(ой)?","Какую маленькую фантазию о нас ты никогда не озвучивал(а)?","Что в моём голосе, взгляде или запахе действует на тебя сильнее всего?","Придумай задание для меня на вечер. Я выполню без вопросов.","Какую фразу ты хочешь слышать от меня чаще?","Поцелуй, который ты запомнил(а) навсегда. Какой это был?","Что ты хочешь попробовать вместе, но стесняешься предложить?"]
+};
+const DATES=[
+["Ужин вслепую: каждый выбирает блюдо для другого и не говорит какое","low"],
+["Ночной маршрут по городу: идёте туда, куда светит ближайший фонарь","low"],
+["Домашний кинотеатр: каждый выбирает фильм, второй смотрит без споров","low"],
+["Готовим вместе блюдо, которого никто из вас не пробовал","low"],
+["Письма друг другу: пишете по письму и обмениваетесь, читаете вслух","low"],
+["Пикник на крыше или в парке с одним пледом и одной темой для разговора","low"],
+["Фотоквест: по пять кадров на тему «наш город глазами другого»","low"],
+["Настольная ночь: выбираете игру, проигравший исполняет желание","low"],
+["Дегустация: сыр, шоколад или чай, угадываете вкус друг за друга","mid"],
+["Мастер-класс по керамике или рисованию в паре","mid"],
+["Квест-комната на двоих","mid"],
+["Караоке только для вас двоих","mid"],
+["Поездка за город без маршрута, только с условием не открывать карты","mid"],
+["Ужин в ресторане, в который вы бы сами никогда не пошли","mid"],
+["Выходные в другом городе, выбор направления по монетке","high"],
+["Прыжок с парашютом в тандеме или полёт в аэротрубе","high"],
+["Ночь в отеле с видом, без телефонов с восьми вечера","high"],
+["Закат на воде: прогулка на яхте или лодке","high"],
+["Балет, опера или концерт с наряжением во всё лучшее","high"],
+["Спа для двоих и романтический ужин после","high"]
+];
+const DAILY=["Что сегодня тебя порадовало, и как я мог(ла) бы быть частью этого?","За что ты благодарен(на) мне на этой неделе?","Какой маленький ритуал ты хотел(а) бы завести у нас?","Что тебе сейчас нужно от меня больше всего?","Чем я могу удивить тебя на этих выходных?","Что ты вспоминаешь о нас с улыбкой?","О чём ты сегодня думал(а), когда не думал(а) ни о чём?","Какое наше будущее путешествие ты уже видишь?","Что я делаю, когда ты чувствуешь себя любимым(ой)?","Какой совет ты бы дал(а) нам прошлым?","Что нового ты хочешь узнать обо мне?","Какой мой жест тебя трогает сильнее всего?","Что ты хочешь, чтобы я сказал(а) тебе сегодня?","О чём мы давно не говорили, но стоит?"];
+
+/* ---------- СОСТОЯНИЕ ---------- */
+let names=store.get('names',['','']);
+let S={};
+const nm=i=>names[i]||(i?'Партнёр 2':'Партнёр 1');
+const nav=(fn)=>{hap();fn()};
+
+function head(title,back){return `<div class="top"><button class="back" onclick="${back||'home()'}">Назад</button><span class="pill">${title||''}</span></div>`}
+function view(h){$.innerHTML=`<div class="fade" style="display:flex;flex-direction:column;flex:1">${h}</div>`;window.scrollTo(0,0)}
+function share(text){
+ const url=BOT_LINK, link='https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text);
+ hap('medium');
+ if(tg&&tg.openTelegramLink)tg.openTelegramLink(link);else window.open(link,'_blank');
+}
+
+/* ---------- ГЛАВНАЯ ---------- */
+function home(){
+ if(!names[0]||!names[1])return setup();
+ const st=store.get('streak',{n:0,last:''});
+ view(`<div style="margin-bottom:22px"><h1>ДВОЕ</h1><p class="sub" style="margin-top:6px">${esc(nm(0))} и ${esc(nm(1))}. Один телефон, две стороны правды.</p></div>
+ <div class="menu">
+  <button class="tile hot" onclick="nav(syncStart)"><b>Синхрон</b><span>Отвечаете по отдельности на 10 вопросов. В конце узнаёте процент совпадения.</span><i></i></button>
+  <button class="tile" onclick="nav(guessStart)"><b>Угадай меня</b><span>Один отвечает про себя, второй угадывает. Кто знает партнёра лучше?</span><i></i></button>
+  <button class="tile" onclick="nav(()=>cardsStart('Начало'))"><b>Разговор по душам</b><span>Три уровня вопросов: от лёгких до тех, которые сближают по-настоящему.</span><i></i></button>
+  <button class="tile" onclick="nav(dateStart)"><b>Рулетка свиданий</b><span>Не знаете, что делать вечером? Крутите и выполняйте.</span><i></i></button>
+  <button class="tile" onclick="nav(dailyStart)"><b>Вопрос дня</b><span>Один вопрос в день. Серия сейчас: ${st.n}.</span><i></i></button>
+ </div>
+ <button class="back" style="margin-top:22px;align-self:center" onclick="setup()">Изменить имена</button>`);
+}
+function setup(){
+ view(`<div class="center" style="text-align:left"><h1 style="font-size:46px">ДВОЕ</h1><p class="sub" style="margin-top:8px">Игра для пары. Введите имена, чтобы вопросы звучали лично для вас.</p>
+ <input id="n0" placeholder="Имя первого" value="${esc(names[0])}" maxlength="16">
+ <input id="n1" placeholder="Имя второго" value="${esc(names[1])}" maxlength="16">
+ <button class="btn" onclick="saveNames()">Начать</button></div>`);
+}
+function saveNames(){
+ const a=document.getElementById('n0').value.trim(),b=document.getElementById('n1').value.trim();
+ if(!a||!b){hap('heavy');return}
+ names=[a,b];store.set('names',names);hap();home();
+}
+
+/* ---------- ПЕРЕДАЙ ТЕЛЕФОН ---------- */
+function handoff(i,text,cb){
+ window._cb=cb;
+ view(`<div class="center"><span class="pill">Передайте телефон</span><div class="who">${esc(nm(i))}</div><p class="sub">${text}</p><button class="btn" onclick="hap();_cb()">Я готов(а)</button></div>`);
+}
+
+/* ---------- СИНХРОН ---------- */
+function syncStart(){S={qs:shuffle(SYNC).slice(0,10),ans:[[],[]],p:0,i:0};handoff(0,'Отвечайте честно. Второй не увидит ваши ответы до конца игры.',syncQ)}
+function syncQ(){
+ const q=S.qs[S.i],pct=Math.round(S.i/S.qs.length*100);
+ view(`${head(nm(S.p)+' · '+(S.i+1)+' из '+S.qs.length,'home()')}<div class="bar"><div style="width:${pct}%"></div></div><div class="q">${esc(q[0])}</div>`+
+ q[1].map((o,k)=>`<button class="opt" onclick="syncPick(${k},this)">${esc(o)}</button>`).join(''));
+}
+function syncPick(k,el){
+ hap();el.classList.add('sel');S.ans[S.p][S.i]=k;
+ setTimeout(()=>{S.i++;
+  if(S.i<S.qs.length)return syncQ();
+  if(S.p===0){S.p=1;S.i=0;handoff(1,'Теперь ваша очередь. Те же вопросы, свои ответы.',syncQ)}else syncRes();
+ },260);
+}
+function syncRes(){
+ let m=0;S.qs.forEach((q,i)=>{if(S.ans[0][i]===S.ans[1][i])m++});
+ const p=Math.round(m/S.qs.length*100);
+ const t=p<30?'Противоположности притягиваются':p<55?'Интересный контраст':p<75?'Вы хорошо слышите друг друга':p<90?'Почти одно целое':'Одна волна';
+ const note=p<55?'Различия не приговор. Обсудите вопросы, где ответы разошлись.':'Сильная синхронность. Проверьте, где вы всё же разошлись.';
+ view(`<div style="text-align:center;margin:10px 0 24px"><span class="pill">Результат</span><div class="big">${p}%</div><div class="rt">${t}</div><p class="sub">${note}</p></div>`+
+ S.qs.map((q,i)=>{const a=S.ans[0][i],b=S.ans[1][i],ok=a===b;return `<div class="row ${ok?'m':''}">${esc(q[0])}<small>${esc(nm(0))}: ${esc(q[1][a])} · ${esc(nm(1))}: ${esc(q[1][b])}</small></div>`}).join('')+
+ `<button class="btn" onclick="share('Мы с партнёром прошли Синхрон в ДВОЕ: ${p}% совпадения. ${t}. Сможете больше?')">Отправить результат в чат</button>
+ <button class="btn ghost" onclick="nav(syncStart)">Сыграть ещё раз</button><button class="btn ghost" onclick="home()">В меню</button>`);
+}
+
+/* ---------- УГАДАЙ МЕНЯ ---------- */
+function guessStart(){S={qs:shuffle(GUESS).slice(0,8),i:0,sc:[0,0],ans:null};guessA()}
+function guessA(){const w=S.i%2;S.w=w;handoff(w,'Сейчас вы отвечаете про себя. Партнёр не должен смотреть в экран.',guessAq)}
+function guessAq(){
+ const q=S.qs[S.i];
+ view(`${head(nm(S.w)+' отвечает · '+(S.i+1)+' из '+S.qs.length,'home()')}<div class="q">${esc(q[0])}</div>`+
+ q[1].map((o,k)=>`<button class="opt" onclick="guessSet(${k})">${esc(o)}</button>`).join(''));
+}
+function guessSet(k){hap();S.ans=k;const g=1-S.w;handoff(g,`Угадайте, что про себя ответил(а) ${esc(nm(S.w))}.`,guessBq)}
+function guessBq(){
+ const q=S.qs[S.i],g=1-S.w;
+ view(`${head(nm(g)+' угадывает · '+(S.i+1)+' из '+S.qs.length,'home()')}<div class="q">${esc(q[0])}</div>`+
+ q[1].map((o,k)=>`<button class="opt" onclick="guessReveal(${k})">${esc(o)}</button>`).join(''));
+}
+function guessReveal(k){
+ hap('medium');const q=S.qs[S.i],g=1-S.w,ok=k===S.ans;if(ok)S.sc[g]++;
+ view(`${head('Ответ','home()')}<div class="q">${esc(q[0])}</div>`+
+ q[1].map((o,j)=>`<div class="opt ${j===S.ans?'ok':(j===k?'bad':'')}">${esc(o)}</div>`).join('')+
+ `<p class="sub" style="text-align:center;margin-top:8px">${ok?'Попадание. '+esc(nm(g))+' знает партнёра.':'Мимо. '+esc(nm(S.w))+' выбрал(а) другой вариант.'}</p>
+ <button class="btn" onclick="guessNext()">${S.i<S.qs.length-1?'Дальше':'Итоги'}</button>`);
+}
+function guessNext(){hap();S.i++;S.i<S.qs.length?guessA():guessRes()}
+function guessRes(){
+ const [a,b]=S.sc,tot=Math.ceil(S.qs.length/2);
+ const w=a===b?'Ничья. Знаете друг друга одинаково.':(a>b?nm(0):nm(1))+' лучше знает партнёра.';
+ view(`<div style="text-align:center;margin:10px 0 24px"><span class="pill">Итоги</span><div class="big">${a}:${b}</div><div class="rt">${esc(w)}</div><p class="sub">Угадано верных ответов из ${tot} у каждого.</p></div>
+ <button class="btn" onclick="share('В ДВОЕ мы сыграли в «Угадай меня»: счёт ${a}:${b}. Кто лучше знает свою половинку?')">Отправить результат в чат</button>
+ <button class="btn ghost" onclick="nav(guessStart)">Сыграть ещё раз</button><button class="btn ghost" onclick="home()">В меню</button>`);
+}
+
+/* ---------- КАРТОЧКИ ---------- */
+function cardsStart(lv){S={lv:lv,deck:shuffle(CARDS[lv]),i:0};cardsShow()}
+function cardsShow(){
+ const levels=Object.keys(CARDS);
+ view(`${head('Разговор по душам','home()')}<div class="seg">${levels.map(l=>`<button class="${l===S.lv?'on':''}" onclick="hap();cardsStart('${l}')">${l}</button>`).join('')}</div>
+ <div class="flip"><div class="lv">${S.lv} · ${S.i+1} из ${S.deck.length}</div><div class="tx">${esc(S.deck[S.i])}</div></div>
+ <p class="sub" style="text-align:center;font-size:13px">Читайте вслух. Отвечайте по очереди, не перебивая.</p>
+ <button class="btn" onclick="cardsNext()">Следующий вопрос</button>`);
+}
+function cardsNext(){hap();S.i=(S.i+1)%S.deck.length;if(S.i===0)S.deck=shuffle(S.deck);cardsShow()}
+
+/* ---------- СВИДАНИЯ ---------- */
+function dateStart(){S={f:'all'};dateShow(null)}
+function dateShow(d){
+ const fl=[['all','Любой'],['low','Дёшево'],['mid','Средне'],['high','Размах']];
+ view(`${head('Рулетка свиданий','home()')}<div class="seg">${fl.map(f=>`<button class="${f[0]===S.f?'on':''}" onclick="hap();S.f='${f[0]}';dateShow(null)">${f[1]}</button>`).join('')}</div>
+ <div class="flip"><div class="lv">${d?'Ваше свидание':'Нажмите, чтобы выбрать'}</div><div class="tx">${d?esc(d[0]):'Судьба решит за вас'}</div></div>
+ <button class="btn" onclick="dateSpin()">${d?'Крутить ещё':'Крутить'}</button>
+ ${d?`<button class="btn ghost" onclick="share('ДВОЕ выбрало для нас свидание: ${d[0].replace(/'/g,'')}. Попробуйте и вы.')">Отправить партнёру</button>`:''}`);
+}
+function dateSpin(){
+ hap('heavy');const p=DATES.filter(d=>S.f==='all'||d[1]===S.f);let n=0;
+ const t=setInterval(()=>{const d=p[Math.floor(Math.random()*p.length)];
+  document.querySelector('.flip .tx').textContent=d[0];hap();
+  if(++n>9){clearInterval(t);dateShow(d)}},90);
+}
+
+/* ---------- ВОПРОС ДНЯ ---------- */
+function dailyStart(){
+ const today=new Date().toISOString().slice(0,10),st=store.get('streak',{n:0,last:'',days:[]});
+ const idx=Math.floor(Date.now()/864e5)%DAILY.length;
+ const done=st.last===today;
+ const dots=Array.from({length:7},(_,i)=>`<span class="${i<Math.min(st.n,7)?'on':''}"></span>`).join('');
+ view(`${head('Вопрос дня','home()')}<p class="sub" style="margin-bottom:0">Серия: ${st.n} ${st.n%10===1&&st.n!==11?'день':(st.n%10>1&&st.n%10<5&&(st.n<10||st.n>20)?'дня':'дней')}</p><div class="streak">${dots}</div>
+ <div class="flip"><div class="lv">Сегодня</div><div class="tx">${esc(DAILY[idx])}</div></div>
+ <p class="sub" style="text-align:center;font-size:13px">Ответьте оба. Сначала один, потом другой. Без телефонов в руках.</p>
+ <button class="btn" ${done?'disabled':''} onclick="dailyDone()">${done?'Сегодня уже отвечали':'Мы ответили'}</button>`);
+}
+function dailyDone(){
+ const today=new Date().toISOString().slice(0,10),st=store.get('streak',{n:0,last:''});
+ const y=new Date(Date.now()-864e5).toISOString().slice(0,10);
+ st.n=(st.last===y)?st.n+1:1;st.last=today;store.set('streak',st);hap('heavy');dailyStart();
+}
+
+home();
+</script>
+</body>
+</html>
